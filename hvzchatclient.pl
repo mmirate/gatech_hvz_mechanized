@@ -121,9 +121,7 @@ sub make_chattracker() {
 	return $newfunc;
 }
 
-
-my $tracker = make_chattracker;
-my $timer_repeated = AE::timer 0, 3, $tracker;
+my $timer_repeated = AE::timer 0, 3, make_chattracker;
 
 my $stdin_ready = AE::io *STDIN, 0, sub {
 	chomp( my $input = <STDIN> );
