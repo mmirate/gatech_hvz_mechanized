@@ -20,11 +20,15 @@ In lieu of me figuring out how to cram a `diff` algorithm into a userscript, thi
 
 ## What this does
 
-`hvzchatclient.pl` prompts for your Georgia Tech SSO credentials; with them and WWW::Mechanize, it scrapes the SSO login page and uses the resulting cookies to access the HvZ website's chat system in mostly the same way that the original website frontend does. Both the general channel and your faction's channel are available to you, and the existing backend keeps track of this; nonetheless, using this program while your faction-membership is in limbo ... has the same consequences to Rule 1 that would occur if you used the regular chat frontend at such a time.
+`hvzchatclient.pl` prompts on standard I/O for your Georgia Tech SSO credentials; with them and WWW::Mechanize, it scrapes the SSO login page and uses the resulting cookies to access the HvZ website's chat system in mostly the same way that the original website frontend does. Both the general channel and your faction's channel are available to you, and the existing backend keeps track of this. (Nonetheless, using this program while your faction-membership is in limbo ... has the same consequences to Rule 1 that would occur if you used the regular chat frontend at such a time.)
 
-Any messages which were not recorded as previously-received, are echoed to standard output, sent through `notify-send` and logged to disk.
+Specifically:
 
-Any input on stdin which matches `/(all|hum|zomb): .+/` will be sent to the corresponding channel, provided that you're not trying to send to the opposing faction.
+- Any messages which were not recorded as previously-received, are echoed to standard output, sent through `notify-send` and logged to disk.
+
+- Any input on stdin which matches `/(all|hum|zomb): .+/` (that is, containing the word "all", "hum" or "zomb", followed immediately by a colon, a space and some message contents) will be sent to the corresponding channel, provided that you're not trying to send to the opposing faction.
+
+- Command-line arguments are ignored.
 
 ## Limitations
 
@@ -40,7 +44,7 @@ Any input on stdin which matches `/(all|hum|zomb): .+/` will be sent to the corr
 - Does not yet scrape the player list to announce faction membership changes.
 - Does not yet scrape the announcements etc that used to be emailed before that system went out-of-commission.
 - Is not fully decomposed into a module and a main program.
-- Error handling is primitive. Most errors will print an error and halt the current poll or send; non-transient errors will spam stderr; and sending to the wrong faction is not handled gracefully.
+- Error handling is primitive. Most errors will print an error and halt the current poll or send; non-transient errors (e.g. network down) will spam stderr with semi-cryptic messages.
 
 ## Dependencies
 
