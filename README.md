@@ -26,6 +26,8 @@ Specifically:
 
 - Any messages which were not recorded as previously-received, are echoed to standard output, sent through `notify-send` and logged to disk.
 
+	- Experimental: such messages are also posted through a GroupMe bot.
+
 - Any input on stdin which matches `/(all|hum|zomb): .+/` (that is, containing the word "all", "hum" or "zomb", followed immediately by a colon, a space and some message contents) will be sent to the corresponding channel, provided that you're not trying to send to the opposing faction.
 
 - Command-line arguments are ignored.
@@ -38,10 +40,10 @@ Specifically:
 
 ## Bugs
 
-- Does not yet interact with you by acting as a client of *insert hip new mobile direct-messaging protocol here*.
+- ~~Does not yet interact with you by acting as a client of *insert hip new mobile direct-messaging protocol here*.~~ Experimental support for GroupMe's bot system is underway.
 - Does not use ncurses or similar to separate input from output. Workaround is to make a fifo, connect the reader end to `hvzchatclient.pl` and connect the writer end to `(echo $username; echo $pass; cat)` on another terminal.
 - Does not yet scrape the HvZ website to identify you and thereby filter-out your own messages from causing notifications.
-- Does not yet scrape the player list to announce faction membership changes.
+- ~~Does not yet scrape the player list to announce faction membership changes.~~
 - Does not yet scrape the announcements etc that used to be emailed before that system went out-of-commission.
 - Is not fully decomposed into a module and a main program.
 - Error handling is primitive. Most errors will print an error and halt the current poll or send; non-transient errors (e.g. network down) will spam stderr with semi-cryptic messages.
@@ -53,14 +55,19 @@ Specifically:
 - a ton of Perl modules:
 	- Algorithm::Diff
 	- AnyEvent
+	- Carp::Always
 	- Class::Struct
 	- Data::Dump
 	- Date::Format
+	- DateTime
+	- DateTime::Format::Strptime
+	- File::Which
 	- HTML::TreeBuilder
 	- IO::All
 	- List::AllUtils
 	- Term::ReadKey
 	- Text::Wrap
+	- URI
 	- WWW::Mechanize
 
 ## Copyright
