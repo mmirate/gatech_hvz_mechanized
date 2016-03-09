@@ -22,7 +22,7 @@ use DateTime::Format::Strptime;
 use File::Which qw/which/;
 use HTML::TreeBuilder 5 -weak;
 use IO::All;
-use List::AllUtils qw/max min notall uniq/;
+use List::AllUtils qw/max min notall uniq first shuffle/;
 use LWP::UserAgent;
 use Term::ReadKey;
 use Text::Wrap qw/wrap/;
@@ -101,7 +101,12 @@ sub concat(@) { map {@$_} @_ }
 		my @deaths = map { $_->[2] } grep {$_->[0] eq '+'} main::concat(main::diff($self->{hvz_data}->{killboard}->{zombie}, $factions->{zombie}));
 		print "$_ is dead.\n" for @deaths;
 		@deaths = () unless scalar @{$self->{hvz_data}->{killboard}->{zombie}};
-		_groupme_post("hum", "I believe $_ bit the dust up to 3 hours ago.") for @deaths;
+		for my $nom (@deaths) {
+			my $exclamation = main::first {1} main::shuffle ("Consarnit.", "Well, drat.", "Argh.", "Dear me.", "Eek!", "Well, I'll be.", "Oh, scrap.", "Hunh.");
+			my $qualifier = main::first {1} main::shuffle ("Looks like", "I think that", "They're 100% positive that", "Seems that", "It appears as though", "The killboard says");
+			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom died", "$nom turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom is no longer with us", "the zeds got $nom");
+			_groupme_post("hum", "$exclamation $qualifier $verbphrase up to 3 hours ago.");
+		}
 		_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
 		$self->{hvz_data}->{killboard} = $factions;
 		$self->back;
