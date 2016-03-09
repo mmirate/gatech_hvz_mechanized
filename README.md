@@ -26,7 +26,7 @@ Specifically:
 
 - Any messages which were not recorded as previously-received, are echoed to standard output, sent through `notify-send` and logged to disk.
 
-	- Experimental: such messages are also posted through a GroupMe bot.
+	- Experimental: such messages are also posted through a GroupMe bot. Requires that one edit `bot_ids.pl` with the Bot IDs that one wishes to use. (Posting my own bots' IDs publicly -> spam)
 
 - Any input on stdin which matches `/(all|hum|zomb): .+/` (that is, containing the word "all", "hum" or "zomb", followed immediately by a colon, a space and some message contents) will be sent to the corresponding channel, provided that you're not trying to send to the opposing faction.
 

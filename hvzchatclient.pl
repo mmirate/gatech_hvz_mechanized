@@ -153,6 +153,7 @@ $main::groupme_bots = do ($0 =~ s/hvzchatclient\.pl$/bot_ids.pl/r);
 sub _groupme_post($$);
 sub _groupme_post($$) {
 	my ($faction, $text) = @_;
+	return if $main::groupme_bots->{$faction} =~ /^</;
 	my $uri = URI->new('https://api.groupme.com/v3/bots/post');
 	$uri->query_form({bot_id=>$main::groupme_bots->{$faction},text=>$text});
 	my $poster = LWP::UserAgent->new;
