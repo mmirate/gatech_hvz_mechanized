@@ -28,7 +28,7 @@ use Term::ReadKey;
 use Text::Wrap qw/wrap/;
 use URI;
 use WWW::Mechanize;
-$Text::Wrap::columns = main::min ($ENV{COLUMNS}, 140);
+$Text::Wrap::columns = main::min ($ENV{COLUMNS} || 80, 140);
 
 my $strp = DateTime::Format::Strptime->new(
 	pattern=>"%Y/%m/%d %R",
@@ -105,9 +105,9 @@ sub concat(@) { map {@$_} @_ }
 			my $exclamation = main::first {1} main::shuffle ("Consarnit.", "Well, drat.", "Argh.", "Dear me.", "Eek!", "Well, I'll be.", "Oh, scrap.", "Hunh.");
 			my $qualifier = main::first {1} main::shuffle ("Looks like", "I think that", "They're 100% positive that", "Seems that", "It appears as though", "The killboard says");
 			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom died", "$nom turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom is no longer with us as of", "the zeds got $nom", "we lost $nom");
-			_groupme_post("hum", "$exclamation $qualifier $verbphrase up to 3 hours ago.");
+			main::_groupme_post("hum", "$exclamation $qualifier $verbphrase up to 3 hours ago.");
 		}
-		_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
+		main::_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
 		$self->{hvz_data}->{killboard} = $factions;
 		$self->back;
 		return $factions;
