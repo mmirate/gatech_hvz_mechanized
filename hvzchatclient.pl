@@ -107,8 +107,8 @@ sub concat(@) { map {@$_} @_ }
 			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom died", "$nom turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom is no longer with us as of", "the zeds got $nom", "we lost $nom");
 			main::_groupme_post("hum", "$exclamation $qualifier $verbphrase up to 3 hours ago.");
 		}
-		main::_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
 		$self->{hvz_data}->{killboard} = $factions;
+		main::_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
 		$self->back;
 		return $factions;
 	}
