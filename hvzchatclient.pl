@@ -8,7 +8,7 @@ use utf8;
 #use lib dirname rel2abs $0;
 ## no critic (SubroutinePrototypes)
 
-use Carp::Always;
+#use Carp::Always;
 use Algorithm::Diff qw/diff/;
 use AnyEvent;
 use AnyEvent::Strict;
@@ -225,9 +225,9 @@ sub _groupme_post($$) {
 			main::_groupme_post("human","My creator has died. RIP. My genes are at http://gatech.edu/mmirate/gatech_hvz_mechanized if anyone wants to re-clone me. Signing off.");
 			$quit->send;
 		}
-		if (defined $should_alert and scalar @oldies) {
-			main::_groupme_post("all","Whoops, looks like I slept through some chat posts. Here we go. Oldies are timestamped.");
-		}
+		#if (defined $should_alert and scalar @oldies) {
+		#	main::_groupme_post("all","Whoops, looks like I slept through some chat posts. Here we go. Oldies are timestamped.");
+		#}
 		print map { $_->alert($should_alert) if defined $should_alert; $_->groupme_post() if defined $should_alert; $_->format($longest_name_length) } sort { $a->timestamp cmp $b->timestamp } @lines;
 	}
 }
