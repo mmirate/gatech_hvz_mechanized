@@ -101,17 +101,7 @@ sub concat(@) { map {@$_} @_ }
 			$factions->{$faction} = [map {$_->as_text} $killboard[0]->look_down(_tag=>'a',href=>qr/\?gtname=/)];
 			$factions->{$faction} = ['The OZ'] unless scalar @{$factions->{$faction}};
 		}
-		my @deaths = map { $_->[2] } grep {$_->[0] eq '+'} main::concat(main::diff($self->{hvz_data}->{killboard}->{zombie}, $factions->{zombie}));
-		print "$_ is dead.\n" for @deaths;
-		@deaths = () unless scalar @{$self->{hvz_data}->{killboard}->{zombie}};
-		for my $nom (@deaths) {
-			my $exclamation = main::first {1} main::shuffle ("Consarnit.", "Well, drat.", "Argh.", "Dear me.", "Eek!", "Well, I'll be.", "Oh, scrap.", "Hunh.", "Well whaddaya know?", "Are you kidding me?");
-			my $qualifier = main::first {1} main::shuffle ("Looks like", "I think that", "Intel suggests - ah, nvm that. We are 100% gorram positive that", "Seems that", "It appears as though", "The killboard says that", "Reports indicate that");
-			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom kicked the bucket", "$nom passed on to the undeath", "$nom died", "$nom was turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom has no longer been with us, starting", "the zeds got $nom", "we lost $nom", "$nom ceased to be human");
-			main::_groupme_post("hum", "$exclamation $qualifier $verbphrase within the past 3 hours.");
-		}
 		$self->{hvz_data}->{killboard} = $factions;
-		main::_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
 		$self->back;
 		return $factions;
 	}
@@ -130,7 +120,7 @@ sub concat(@) { map {@$_} @_ }
 		my $self = shift;
 
 		my $longest_name_length = $self->longest_name_length_on_killboard;
-		main::_groupme_post("hum", "Bot reporting for duty.");
+		main::_groupme_post("all", "Bot reporting for duty.");
 		ChatLine->print_all($self, $longest_name_length, undef, main::concat values %{$self->{hvz_data}->{chatlines}});
 		return sub {
 			use sort 'stable';
@@ -215,6 +205,7 @@ sub _groupme_post($$) {
 	sub groupme_post ($) {
 		my $self = shift;
 		return if $self->faction eq "all" and not $self->sender_is_admin;
+		return if $self->faction ne "all";
 		#print $timestamp; print "\n";
 		my $message = sprintf("[%s] %s",$self->sender,$self->message);
 		$message = sprintf("[%s] ",$self->timestamp) . $message if $self->is_old;
@@ -224,12 +215,12 @@ sub _groupme_post($$) {
 	sub print_all($$$&@) {
 		my ($class, $mech, $longest_name_length, $should_alert, @lines) = @_;
 		#open my $null, '>', '/dev/null';
-		my @oldies = grep { $_->is_old } @lines;
-		if (main::notall { !(defined $_ ) or defined $main::groupme_bots->{$_->faction} } @lines) {
-			main::_groupme_post("human","My creator has died. RIP. My genes are at http://gatech.edu/mmirate/gatech_hvz_mechanized if anyone wants to re-clone me. Signing off.");
-			$main::i_am_dead = 1;
-			$quit->send;
-		}
+		#my @oldies = grep { $_->is_old } @lines;
+		#if (main::notall { !(defined $_ ) or defined $main::groupme_bots->{$_->faction} } @lines) {
+		#	main::_groupme_post("human","My creator has died. RIP. My genes are at http://gatech.edu/mmirate/gatech_hvz_mechanized if anyone wants to re-clone me. Signing off.");
+		#	$main::i_am_dead = 1;
+		#	$quit->send;
+		#}
 		#if (defined $should_alert and scalar @oldies) {
 		#	main::_groupme_post("all","Whoops, looks like I slept through some chat posts. Here we go. Oldies are timestamped.");
 		#}
