@@ -30,6 +30,9 @@ use URI;
 use WWW::Mechanize;
 $Text::Wrap::columns = main::min ($ENV{COLUMNS} || 80, 140);
 
+$main::start_time = time;
+$main::i_am_dead = 0;
+
 my $strp = DateTime::Format::Strptime->new(
 	pattern=>"%Y/%m/%d %R",
 	time_zone=>'America/New_York',
@@ -102,10 +105,10 @@ sub concat(@) { map {@$_} @_ }
 		print "$_ is dead.\n" for @deaths;
 		@deaths = () unless scalar @{$self->{hvz_data}->{killboard}->{zombie}};
 		for my $nom (@deaths) {
-			my $exclamation = main::first {1} main::shuffle ("Consarnit.", "Well, drat.", "Argh.", "Dear me.", "Eek!", "Well, I'll be.", "Oh, scrap.", "Hunh.");
-			my $qualifier = main::first {1} main::shuffle ("Looks like", "I think that", "They're 100% positive that", "Seems that", "It appears as though", "The killboard says");
-			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom died", "$nom turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom is no longer with us as of", "the zeds got $nom", "we lost $nom");
-			main::_groupme_post("hum", "$exclamation $qualifier $verbphrase up to 3 hours ago.");
+			my $exclamation = main::first {1} main::shuffle ("Consarnit.", "Well, drat.", "Argh.", "Dear me.", "Eek!", "Well, I'll be.", "Oh, scrap.", "Hunh.", "Well whaddaya know?", "Are you kidding me?");
+			my $qualifier = main::first {1} main::shuffle ("Looks like", "I think that", "Intel suggests - ah, nvm that. We are 100% gorram positive that", "Seems that", "It appears as though", "The killboard says that", "Reports indicate that");
+			my $verbphrase = main::first {1} main::shuffle ("$nom bit the dust", "$nom kicked the bucket", "$nom passed on to the undeath", "$nom died", "$nom was turned", "$nom was nommed", "someone killed $nom", "$nom became an ex-human", "$nom has no longer been with us, starting", "the zeds got $nom", "we lost $nom", "$nom ceased to be human");
+			main::_groupme_post("hum", "$exclamation $qualifier $verbphrase within the past 3 hours.");
 		}
 		$self->{hvz_data}->{killboard} = $factions;
 		main::_groupme_post("hum", "There are now ".(scalar @{$self->{hvz_data}->{killboard}->{zombie}})." zombies on the killboard.") if @deaths;
@@ -127,6 +130,7 @@ sub concat(@) { map {@$_} @_ }
 		my $self = shift;
 
 		my $longest_name_length = $self->longest_name_length_on_killboard;
+		main::_groupme_post("hum", "Bot reporting for duty.");
 		ChatLine->print_all($self, $longest_name_length, undef, main::concat values %{$self->{hvz_data}->{chatlines}});
 		return sub {
 			use sort 'stable';
@@ -212,7 +216,7 @@ sub _groupme_post($$) {
 		my $self = shift;
 		return if $self->faction eq "all" and not $self->sender_is_admin;
 		#print $timestamp; print "\n";
-		my $message = sprintf("%s: %s",$self->sender,$self->message);
+		my $message = sprintf("[%s] %s",$self->sender,$self->message);
 		$message = sprintf("[%s] ",$self->timestamp) . $message if $self->is_old;
 		main::_groupme_post($self->faction,$message);
 	}
@@ -223,6 +227,7 @@ sub _groupme_post($$) {
 		my @oldies = grep { $_->is_old } @lines;
 		if (main::notall { !(defined $_ ) or defined $main::groupme_bots->{$_->faction} } @lines) {
 			main::_groupme_post("human","My creator has died. RIP. My genes are at http://gatech.edu/mmirate/gatech_hvz_mechanized if anyone wants to re-clone me. Signing off.");
+			$main::i_am_dead = 1;
 			$quit->send;
 		}
 		#if (defined $should_alert and scalar @oldies) {
@@ -250,3 +255,7 @@ my $stdin_ready = AE::io *STDIN, 0, sub {
 };
 
 $quit->recv;
+
+END {
+	main::_groupme_post("hum", '@Milo Mirate Help! I\'ve fallen and I can\'t get up!') unless $main::i_am_dead || ( time() - $main::start_time < 120);
+}
